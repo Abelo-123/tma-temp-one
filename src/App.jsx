@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
+import { useEffect, useState } from 'react';
+import reactLogo from './assets/react.svg';
+import viteLogo from '/vite.svg';
 import './App.css';
 
-
-
+function App() {
   const [tgTheme, setTgTheme] = useState('');
   const [tgUser, setTgUser] = useState(null);
   const [message, setMessage] = useState('');
@@ -68,4 +70,4 @@ import './App.css';
   );
 }
 
-export default App
+export default App;
