@@ -2,25 +2,39 @@ import { useEffect, useState } from 'react';
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
-// Telegram WebApp SDK
-const tg = window?.Telegram?.WebApp;
 
-function App() {
+
+
   const [tgTheme, setTgTheme] = useState('');
   const [tgUser, setTgUser] = useState(null);
   const [message, setMessage] = useState('');
+  const [isTelegram, setIsTelegram] = useState(false);
 
   useEffect(() => {
-    if (tg) {
-      tg.ready();
-      setTgTheme(tg.themeParams.bg_color || 'default');
-      setTgUser(tg.initDataUnsafe?.user || null);
-    }
+    // Dynamically load Telegram WebApp SDK
+    const script = document.createElement('script');
+    script.src = 'https://telegram.org/js/telegram-web-app.js?2';
+    script.async = true;
+    document.body.appendChild(script);
+
+    script.onload = () => {
+      if (window.Telegram && window.Telegram.WebApp) {
+        setIsTelegram(true);
+        window.Telegram.WebApp.expand();
+        window.Telegram.WebApp.ready();
+        setTgTheme(window.Telegram.WebApp.themeParams.bg_color || 'default');
+        setTgUser(window.Telegram.WebApp.initDataUnsafe?.user || null);
+      }
+    };
+    // Clean up script if component unmounts
+    return () => {
+      document.body.removeChild(script);
+    };
   }, []);
 
   const sendMessage = () => {
-    if (tg) {
-      tg.sendData(message);
+    if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.sendData(message);
       alert('Message sent to Telegram!');
     }
   };
@@ -28,7 +42,7 @@ function App() {
   return (
     <div style={{ background: tgTheme, minHeight: '100vh', padding: 24 }}>
       <h1>Telegram Mini App Sample</h1>
-      {tgUser ? (
+      {isTelegram && tgUser ? (
         <div>
           <p>Welcome, {tgUser.first_name} {tgUser.last_name}</p>
           <p>User ID: {tgUser.id}</p>
