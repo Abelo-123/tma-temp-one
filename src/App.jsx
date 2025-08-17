@@ -7,31 +7,45 @@ function App() {
   const [message, setMessage] = useState('');
   const [isTelegram, setIsTelegram] = useState(false);
 
+  // Load Telegram SDK only once and provide a reusable getter
   useEffect(() => {
-    // Dynamically load Telegram WebApp SDK
-    const script = document.createElement('script');
-    script.src = 'https://telegram.org/js/telegram-web-app.js?2';
-    script.async = true;
-    document.body.appendChild(script);
+    if (!window.Telegram || !window.Telegram.WebApp) {
+      const script = document.createElement('script');
+      script.src = 'https://telegram.org/js/telegram-web-app.js?2';
+      script.async = true;
+      document.body.appendChild(script);
 
-    script.onload = () => {
-      if (window.Telegram && window.Telegram.WebApp) {
-        setIsTelegram(true);
-        window.Telegram.WebApp.expand();
-        window.Telegram.WebApp.ready();
-        setTgTheme(window.Telegram.WebApp.themeParams.bg_color || 'default');
-        setTgUser(window.Telegram.WebApp.initDataUnsafe?.user || null);
-      }
-    };
-    // Clean up script if component unmounts
-    return () => {
-      document.body.removeChild(script);
-    };
+      script.onload = () => {
+        if (window.Telegram && window.Telegram.WebApp) {
+          setIsTelegram(true);
+          window.Telegram.WebApp.expand();
+          window.Telegram.WebApp.ready();
+          setTgTheme(window.Telegram.WebApp.themeParams.bg_color || 'default');
+          setTgUser(window.Telegram.WebApp.initDataUnsafe?.user || null);
+        }
+      };
+      // Clean up script if component unmounts
+      return () => {
+        document.body.removeChild(script);
+      };
+    } else {
+      setIsTelegram(true);
+      window.Telegram.WebApp.expand();
+      window.Telegram.WebApp.ready();
+      setTgTheme(window.Telegram.WebApp.themeParams.bg_color || 'default');
+      setTgUser(window.Telegram.WebApp.initDataUnsafe?.user || null);
+    }
   }, []);
 
+  // Reusable getter for Telegram WebApp
+  const getTelegramWebApp = () => {
+    return window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+  };
+
   const sendMessage = () => {
-    if (window.Telegram && window.Telegram.WebApp) {
-      window.Telegram.WebApp.sendData(message);
+    const tg = getTelegramWebApp();
+    if (tg) {
+      tg.sendData(message);
       alert('Message sent to Telegram!');
     }
   };
