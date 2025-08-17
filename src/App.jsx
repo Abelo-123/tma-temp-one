@@ -5,13 +5,11 @@ import {
   Text,
   Input,
   List,
-  ListItem,
   Spinner,
   Switch,
   Checkbox,
   Radio,
-  Modal,
-  useTheme
+  Modal
 } from '@telegram-apps/telegram-ui';
 import './App.css';
 
@@ -24,7 +22,7 @@ function App() {
   const [switchOn, setSwitchOn] = useState(false);
   const [checked, setChecked] = useState(false);
   const [radioValue, setRadioValue] = useState('1');
-  const theme = useTheme();
+  // Removed useTheme, not available in @telegram-apps/telegram-ui
 
   // Load Telegram SDK only once and provide a reusable getter
   useEffect(() => {
@@ -70,7 +68,7 @@ function App() {
   };
 
   return (
-    <Section style={{ background: tgTheme || theme.background, minHeight: '100vh', padding: 24 }}>
+  <Section style={{ background: tgTheme || '#fff', minHeight: '100vh', padding: 24 }}>
       <Text variant="title" style={{ marginBottom: 16 }}>Telegram Mini App Sample</Text>
       {isTelegram && tgUser ? (
         <Section>
@@ -92,10 +90,7 @@ function App() {
       </Section>
       <Section style={{ marginTop: 24 }}>
         <Text variant="subtitle">Telegram UI Components Demo</Text>
-        <List>
-          <ListItem>List Item 1</ListItem>
-          <ListItem>List Item 2</ListItem>
-        </List>
+  <List items={["List Item 1", "List Item 2"]} />
         <Spinner />
         <Switch checked={switchOn} onChange={() => setSwitchOn(!switchOn)} label="Switch" />
         <Checkbox checked={checked} onChange={() => setChecked(!checked)} label="Checkbox" />
