@@ -1,4 +1,18 @@
 import { useEffect, useState } from 'react';
+import {
+  Button,
+  Section,
+  Text,
+  Input,
+  List,
+  ListItem,
+  Spinner,
+  Switch,
+  Checkbox,
+  Radio,
+  Modal,
+  useTheme
+} from '@telegram-apps/telegram-ui';
 import './App.css';
 
 function App() {
@@ -6,6 +20,11 @@ function App() {
   const [tgUser, setTgUser] = useState(null);
   const [message, setMessage] = useState('');
   const [isTelegram, setIsTelegram] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [switchOn, setSwitchOn] = useState(false);
+  const [checked, setChecked] = useState(false);
+  const [radioValue, setRadioValue] = useState('1');
+  const theme = useTheme();
 
   // Load Telegram SDK only once and provide a reusable getter
   useEffect(() => {
@@ -51,31 +70,50 @@ function App() {
   };
 
   return (
-    <div style={{ background: tgTheme, minHeight: '100vh', padding: 24 }}>
-      <h1>Telegram Mini App Sample</h1>
+    <Section style={{ background: tgTheme || theme.background, minHeight: '100vh', padding: 24 }}>
+      <Text variant="title" style={{ marginBottom: 16 }}>Telegram Mini App Sample</Text>
       {isTelegram && tgUser ? (
-        <div>
-          <p>Welcome, {tgUser.first_name} {tgUser.last_name}</p>
-          <p>User ID: {tgUser.id}</p>
-        </div>
+        <Section>
+          <Text variant="subtitle">Welcome, {tgUser.first_name} {tgUser.last_name}</Text>
+          <Text>User ID: {tgUser.id}</Text>
+        </Section>
       ) : (
-        <p>Not running inside Telegram WebApp</p>
+        <Text>Not running inside Telegram WebApp</Text>
       )}
-      <div style={{ marginTop: 24 }}>
-        <input
-          type="text"
+      <Section style={{ marginTop: 24 }}>
+        <Input
           value={message}
           onChange={e => setMessage(e.target.value)}
           placeholder="Type a message to send to Telegram"
         />
-        <button onClick={sendMessage} style={{ marginLeft: 8 }}>
+        <Button onClick={sendMessage} style={{ marginLeft: 8 }}>
           Send to Telegram
-        </button>
-      </div>
-      <p style={{ marginTop: 32 }}>
-        This is a sample Telegram Mini App built with React and Vite.
-      </p>
-    </div>
+        </Button>
+      </Section>
+      <Section style={{ marginTop: 24 }}>
+        <Text variant="subtitle">Telegram UI Components Demo</Text>
+        <List>
+          <ListItem>List Item 1</ListItem>
+          <ListItem>List Item 2</ListItem>
+        </List>
+        <Spinner />
+        <Switch checked={switchOn} onChange={() => setSwitchOn(!switchOn)} label="Switch" />
+        <Checkbox checked={checked} onChange={() => setChecked(!checked)} label="Checkbox" />
+        <Radio checked={radioValue === '1'} onChange={() => setRadioValue('1')} label="Radio 1" />
+        <Radio checked={radioValue === '2'} onChange={() => setRadioValue('2')} label="Radio 2" />
+        <Button onClick={() => setShowModal(true)} style={{ marginTop: 8 }}>Show Modal</Button>
+        <Modal open={showModal} onClose={() => setShowModal(false)}>
+          <Section>
+            <Text variant="title">Telegram Modal</Text>
+            <Text>This is a modal dialog using Telegram UI.</Text>
+            <Button onClick={() => setShowModal(false)}>Close</Button>
+          </Section>
+        </Modal>
+      </Section>
+      <Text style={{ marginTop: 32 }}>
+        This is a sample Telegram Mini App built with React, Vite, and Telegram UI.
+      </Text>
+    </Section>
   );
 }
 
